@@ -1,7 +1,9 @@
+import 'package:aulas/pages/shortcuts/shortcuts.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 import '../background/background.dart';
-import '../taskbar/taskbarMain.dart';
+import '../taskbar/task_bar_main.dart';
 import 'package:draggable_widget/draggable_widget.dart';
 
 class MyOs extends StatefulWidget {
@@ -12,30 +14,37 @@ class MyOs extends StatefulWidget {
 }
 
 class _MyOsState extends State<MyOs> {
-  final dragController = DragController();
+  bool _isVisible = true;
+  void teste() {
+    setState(() {
+
+      _isVisible = !_isVisible;
+    });
+  }
+  late Offset position;
+
   @override
   Widget build(BuildContext context) {
-    double taskW = MediaQuery.of(context).size.width *1;
-    double taskH = MediaQuery.of(context).size.height *1;
+    final dragController = DragController();
+
+
+    double taskW = MediaQuery.of(context).size.width * 1;
+    double taskH2 = MediaQuery.of(context).devicePixelRatio * 30;
+    double taskH = MediaQuery.of(context).size.height * 1;
     return Container(
       width: taskW,
       height: taskH,
       child: Stack(
-        children:  [
+        children: [
           BackGround(),
-          //ShortCuts();
+          ShortCuts(),
 
-          DraggableWidget(
-            intialVisibility: true,
-            initialPosition: AnchoringPosition.center,
-            verticalSpace: 40,
-            horizontalSpace: 1,
-            normalShadow: BoxShadow(blurRadius: 0.002,spreadRadius: 0,color: Color.fromRGBO(0, 9, 9, 0)),
-            shadowBorderRadius: 0,
-            draggingShadow: BoxShadow(blurRadius: 1,spreadRadius: 1000,color: Color.fromRGBO(0, 9, 9, 0.2)),
-            child: TaskBar(),
-            dragController: dragController,
-            ),
+          Visibility(
+            visible: _isVisible,
+            child:  TaskBar(),
+
+          ),
+
         ],
       ),
     );

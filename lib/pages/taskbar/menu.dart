@@ -8,7 +8,7 @@ class PlusMinusEntry extends PopupMenuEntry<int> {
   @override
   double height = 100;
 
-  PlusMinusEntry(this.cHeight, this.cWidth,this.colorC);
+  PlusMinusEntry(this.cHeight, this.cWidth, this.colorC);
 
   // height doesn't matter, as long as we are not giving
   // initialValue to showMenu().
@@ -26,35 +26,73 @@ class PlusMinusEntryState extends State<PlusMinusEntry> {
     Navigator.pop<int>(context, 1);
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-    double taskW = MediaQuery.of(context).size.width *1;
-    double taskH = MediaQuery.of(context).size.height *0.08;
+    double taskW = MediaQuery.of(context).size.width * 1;
+    double taskH = MediaQuery.of(context).size.height * 0.08;
 
-    Future  _minus1() async {
-
+    Future _minus1() async {
       setState(() {
         widget.cHeight = taskH;
-        widget.cWidth=taskW;
+        widget.cWidth = taskW;
         widget.colorC = Colors.red;
-
       });
       Navigator.pop<int>(context, -1);
     }
+
     return Column(
       children: [
-        FlatButton(
-          onPressed: _plus1,
-          child: Text('Configurações'),
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: FlatButton(
+            onPressed: _plus1,
+            child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Text(
+                  'Configurações',
+                  style: TextStyle(color: Colors.white70, fontSize: 10),
+                  textAlign: TextAlign.left,
+                )),
+          ),
         ),
-
-        FlatButton(
-          onPressed: (){
-           _minus1();
-          },
-          child: Text('Girar'),
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: FlatButton(
+            onPressed: () {
+              _minus1();
+            },
+            child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Text('Girar',
+                    style: TextStyle(color: Colors.white70, fontSize: 10),
+                    textAlign: TextAlign.left)),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: FlatButton(
+            onPressed: () {
+              _minus1();
+            },
+            child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Text('Girar',
+                    style: TextStyle(color: Colors.white70, fontSize: 10),
+                    textAlign: TextAlign.left)),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: FlatButton(
+            onPressed: () {
+              _minus1();
+            },
+            child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Text('Girar',
+                    style: TextStyle(color: Colors.white70, fontSize: 10),
+                    textAlign: TextAlign.left)),
+          ),
         ),
       ],
     );
