@@ -31,9 +31,9 @@ class PlusMinusEntryState extends State<PlusMinusEntry> {
     double taskW = MediaQuery.of(context).size.width * 1;
     double taskH = MediaQuery.of(context).size.height * 0.08;
 
-    Future _minus1() async {
+    _minus1() {
       setState(() {
-        widget.cHeight = taskH;
+        widget.cHeight = 700;
         widget.cWidth = taskW;
         widget.colorC = Colors.red;
       });

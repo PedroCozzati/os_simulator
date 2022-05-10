@@ -1,20 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class MoveableStackItem extends StatefulWidget {
-  final String img;
-  final String text;
-  final double pos;
+class MovItem extends StatefulWidget {
 
-  const MoveableStackItem({Key? key, required this.img,required this.pos, required this.text}) : super(key: key);
+final Widget widget;
+
+  const MovItem({Key? key, required this.widget, }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _MoveableStackItemState();
+    return _MovItemState();
   }
 }
 
-class _MoveableStackItemState extends State<MoveableStackItem> {
+class _MovItemState extends State<MovItem> {
 
   double xPosition = 0;
   double yPosition = 0;
@@ -30,8 +29,8 @@ class _MoveableStackItemState extends State<MoveableStackItem> {
     double taskH2 = MediaQuery.of(context).devicePixelRatio *3;
     double taskH = MediaQuery.of(context).size.width *0.0004;
     return Positioned(
-      top: yPosition+widget.pos,
-      left: xPosition+30,
+      top: yPosition,
+      left: xPosition,
       child: GestureDetector(
         onPanUpdate: (tapInfo) {
           setState(() {
@@ -47,15 +46,7 @@ class _MoveableStackItemState extends State<MoveableStackItem> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Image.asset(
-                    widget.img,
-                    scale: 1/taskH ,
-                  ),
-                  SizedBox(height: 10,),
-                  DefaultTextStyle(
-                    style: TextStyle(fontSize: 10,color: Colors.white),
-                    child: Text(widget.text),
-                  )
+                 widget,
                 ],
               ),
             ),
