@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class MovItem extends StatefulWidget {
+class MoveProg extends StatefulWidget {
 
-final Widget widget;
-
-  const MovItem({Key? key, required this.widget, }) : super(key: key);
+  const MoveProg({Key? key,}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _MovItemState();
+    return _MoveProgState();
   }
 }
 
-class _MovItemState extends State<MovItem> {
+class _MoveProgState extends State<MoveProg> {
 
   double xPosition = 0;
   double yPosition = 0;
@@ -29,8 +27,8 @@ class _MovItemState extends State<MovItem> {
     double taskH2 = MediaQuery.of(context).devicePixelRatio *3;
     double taskH = MediaQuery.of(context).size.width *0.0004;
     return Positioned(
-      top: yPosition,
-      left: xPosition,
+      top: yPosition+300,
+      left: xPosition+30,
       child: GestureDetector(
         onPanUpdate: (tapInfo) {
           setState(() {
@@ -41,15 +39,22 @@ class _MovItemState extends State<MovItem> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                 widget,
-                ],
-              ),
-            ),
+            AlertDialog(
+                backgroundColor: Color.fromRGBO(57, 57, 57, 1),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                content: Builder(builder: (context) {
+                  var height = MediaQuery.of(context).size.height;
+                  var width = MediaQuery.of(context).size.width;
+                  return Stack(
+                    children: [
+                      Container(
+                        height: height - 400,
+                        width: width - 400,
+                        ),
+                    ],
+                  );
+                })),
           ],
         ),
       ),
