@@ -5,6 +5,7 @@ import 'package:aulas/pages/taskbar/menu.dart';
 import 'package:draggable_widget/draggable_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:resizable_widget/resizable_widget.dart';
 
 import '../finder/mov.dart';
 
@@ -16,16 +17,21 @@ class TaskBar extends StatefulWidget {
 }
 
 class _TaskBarState extends State<TaskBar> {
-  Color colorC = Color.fromRGBO(37, 36, 87, 0.3);
+  Color colorC = Color.fromRGBO(37, 36, 87, 0.6);
   final dragController = DragController();
 
   double taskW(BuildContext context) =>
-      MediaQuery.of(context).size.width * 0.35;
+      MediaQuery.of(context).size.width * 0.30;
 
   double taskW2(BuildContext context) => MediaQuery.of(context).size.width * 1;
+  double taskH4(BuildContext context) => MediaQuery.of(context).size.height ;
+
 
   double taskH(BuildContext context) =>
       MediaQuery.of(context).size.height * 0.08;
+
+  double taskI(BuildContext context) =>
+      MediaQuery.of(context).size.width *0.0009;
 
   double taskH2(BuildContext context) =>
       MediaQuery.of(context).devicePixelRatio * 20;
@@ -84,81 +90,19 @@ class _TaskBarState extends State<TaskBar> {
     ));
   }
 
+
   alertDialog(BuildContext context) {
     showDialog(
       barrierDismissible: false,
       barrierColor: null,
       context: context,
       builder: (_) => Container(
-        height: 400,
-        width: 800,
-        child: Stack(
-          children: [
-
-                  MoveProg(),
-
-
-
-
-
-
-            // AlertDialog(
-            //     backgroundColor: Color.fromRGBO(57, 57, 57, 1),
-            //     shape: RoundedRectangleBorder(
-            //         borderRadius: BorderRadius.all(Radius.circular(10.0))),
-            //     content: Builder(builder: (context) {
-            //       var height = MediaQuery.of(context).size.height;
-            //       var width = MediaQuery.of(context).size.width;
-            //       return Container(
-            //         height: height - 400,
-            //         width: width - 400,
-            //       );
-            //     })),
-
-            // DraggableWidget(
-            //   initialPosition: AnchoringPosition.center,
-            //   dragController: dragController,
-            //   child: AlertDialog(
-            //       backgroundColor: Color.fromRGBO(57, 57, 57, 1),
-            //       shape: RoundedRectangleBorder(
-            //           borderRadius:
-            //           BorderRadius.all(
-            //               Radius.circular(10.0))),
-            //       content: Builder(
-            //         builder: (context) {
-            //           // Get available height and width of the build area of this widget. Make a choice depending on the size.
-            //           var height = MediaQuery.of(context).size.height;
-            //           var width = MediaQuery.of(context).size.width;
-            //           return Container(
-            //               height: height - 400,
-            //               width: width - 400,
-            //               child: Column(
-            //                 mainAxisAlignment: MainAxisAlignment.start,
-            //                 children: [
-            //                   Container(
-            //                     width: double.maxFinite,
-            //                     height: 30,
-            //                     color: Colors.black54,
-            //                     child: Row(
-            //                       children: [
-            //                         Expanded(flex: 15,child: Container(width: 100,)),
-            //                         Expanded(flex:1,child: Container(width: 30,color: Colors.green,)),
-            //                         Expanded(flex:1,child: Container(width: 30,color: Colors.yellow,)),
-            //                         Expanded(flex:1,child: Container(width: 30,color: Colors.red,)),
-            //                       ],
-            //                     ),
-            //                   ),
-            //                   Container(height: 100,),
-            //                 ],
-            //               ),
-            //           );
-            //         },
-            //       ),
-            //     ),
-            // ),
-          ],
+          child: Stack(
+            children: [
+              MoveProg(),
+            ],
+          ),
         ),
-      ),
     );
   }
 
@@ -197,7 +141,7 @@ class _TaskBarState extends State<TaskBar> {
                   _showCustomMenu();
                 },
                 child: Container(
-                  width: double.maxFinite,
+                  width: taskW(context),
                   height: taskH(context),
                   decoration: BoxDecoration(
                       color: colorC, //const Color.fromRGBO(37, 36, 87,0.7),
@@ -215,7 +159,7 @@ class _TaskBarState extends State<TaskBar> {
                             borderRadius: BorderRadius.circular(8.0),
                             child: Image.asset(
                               "assets/1.png",
-                              scale: 0.8,
+                              scale: 1/taskI(context) ,
                             ),
                           ),
                         ),
@@ -223,42 +167,42 @@ class _TaskBarState extends State<TaskBar> {
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image.asset(
                             "assets/2.png",
-                            scale: 0.8,
+                            scale: 1/taskI(context) ,
                           ),
                         ),
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image.asset(
                             "assets/3.png",
-                            scale: 0.8,
+                            scale: 1/taskI(context) ,
                           ),
                         ),
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image.asset(
                             "assets/4.png",
-                            scale: 0.8,
+                            scale: 1/taskI(context) ,
                           ),
                         ),
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image.asset(
                             "assets/5.png",
-                            scale: 0.8,
+                            scale: 1/taskI(context) ,
                           ),
                         ),
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image.asset(
                             "assets/6.png",
-                            scale: 0.8,
+                            scale: 1/taskI(context) ,
                           ),
                         ),
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image.asset(
                             "assets/7.png",
-                            scale: 0.8,
+                            scale: 1/taskI(context) ,
                           ),
                         ),
                         VerticalDivider(
@@ -270,7 +214,7 @@ class _TaskBarState extends State<TaskBar> {
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image.asset(
                             "assets/8.png",
-                            scale: 0.8,
+                            scale: 1/taskI(context) ,
                           ),
                         ),
                       ],

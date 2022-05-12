@@ -37,12 +37,13 @@ class _MyOsState extends State<MyOs> {
       child: Stack(
         children: [
           BackGround(),
+          ShortCuts(),
           Visibility(
               visible: _isVisible,
               child:TaskBar()
 
           ),
-          ShortCuts(),
+
 
 
 

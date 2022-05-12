@@ -76,7 +76,7 @@ class PlusMinusEntryState extends State<PlusMinusEntry> {
             },
             child: Align(
                 alignment: Alignment.bottomLeft,
-                child: Text('Girar',
+                child: Text('teste',
                     style: TextStyle(color: Colors.white70, fontSize: 10),
                     textAlign: TextAlign.left)),
           ),
@@ -89,7 +89,7 @@ class PlusMinusEntryState extends State<PlusMinusEntry> {
             },
             child: Align(
                 alignment: Alignment.bottomLeft,
-                child: Text('Girar',
+                child: Text('teste',
                     style: TextStyle(color: Colors.white70, fontSize: 10),
                     textAlign: TextAlign.left)),
           ),
