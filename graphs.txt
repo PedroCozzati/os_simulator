@@ -1,0 +1,246 @@
+import 'package:flutter/material.dart';
+import 'dart:math';
+
+import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/material.dart';
+import 'package:graphs/price.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: LineChartWidget(true),
+    );
+  }
+}
+
+const _dashArray = [4, 2];
+
+PricePoints pricePoints = PricePoints(0, 10);
+PricePoints pricePoints2 = PricePoints(1, 200);
+PricePoints pricePoints3 = PricePoints(2, 300);
+PricePoints pricePoints4 = PricePoints(3, 900);
+
+class DataItem {
+  int month;
+  double sales;
+
+  DataItem({
+    required this.month,
+    required this.sales,
+  });
+}
+
+class LineChartWidget extends StatelessWidget {
+  final List<DataItem> _myData = List.generate(
+    13,
+    (index) => DataItem(
+      month: index+1,
+      sales: Random().nextInt(10) + Random().nextDouble(),
+    ),
+  );
+
+  // final List<PricePoints> points = [
+  //   pricePoints,
+  //   pricePoints2,
+  //   pricePoints3,
+  //   pricePoints4
+  // ];
+  final bool isPositiveChange;
+
+  LineChartWidget(this.isPositiveChange, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    const double minY = 0;
+    const double maxY = 20;
+
+    var spots = [
+      const FlSpot(1, 6.9),
+      const FlSpot(3, 3.2),
+      const FlSpot(5, 1.34),
+      const FlSpot(7, 2.45),
+      const FlSpot(9, 0.0),
+      const FlSpot(10, 2.0),
+      const FlSpot(11, 4.4),
+      const FlSpot(12, 5.2),
+    ];
+
+    return AspectRatio(
+      aspectRatio: 2,
+      child: Scaffold(
+        body: Container(
+          height: 500,
+          width: 600,
+          child: Padding(
+            padding: const EdgeInsets.all(28.0),
+            child: LineChart(
+              LineChartData(
+                  lineTouchData: LineTouchData(
+                      enabled: true,
+                      touchCallback: (FlTouchEvent event,
+                          LineTouchResponse? touchResponse) {
+                        // TODO : Utilize touch event here to perform any operation
+                      },
+                      touchTooltipData: LineTouchTooltipData(
+                        fitInsideVertically: false,
+                        tooltipBgColor: Colors.black,
+                        tooltipRoundedRadius: 20.0,
+                        showOnTopOfTheChartBoxArea: false,
+                        fitInsideHorizontally: true,
+                        tooltipMargin: 0,
+                        // getTooltipItems: (touchedSpots) {
+                        //   return touchedSpots.map(
+                        //     (LineBarSpot touchedSpot) {
+                        //       const textStyle = TextStyle(
+                        //         fontSize: 10,
+                        //         fontWeight: FontWeight.w700,
+                        //         color: Colors.white,
+                        //       );
+                        //       return LineTooltipItem(
+                        //         points[touchedSpot.spotIndex].y.toInt().toString(),
+                        //         textStyle,
+                        //       );
+                        //     },
+                        //   ).toList();
+                        // },
+                      ),
+                      getTouchedSpotIndicator:
+                          (LineChartBarData barData, List<int> indicators) {
+                        return indicators.map(
+                          (int index) {
+                            final line = FlLine(
+                                color: Colors.white,
+                                strokeWidth: 1,
+                                dashArray: _dashArray);
+                            return TouchedSpotIndicatorData(
+                              line,
+                              FlDotData(
+                                show: true,
+                                getDotPainter: (spot, percent, barData, index) {
+                                  return FlDotCirclePainter(
+                                    radius: 5.5,
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                    strokeColor: Colors.white,
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                        ).toList();
+                      },
+                      getTouchLineEnd: (_, __) => double.infinity),
+                  lineBarsData: [
+                    LineChartBarData(
+                      spots: _myData.map((dataItem) =>FlSpot(dataItem.month.toDouble(),dataItem.sales)).toList(),
+                      //points.map((point) => FlSpot(point.x, point.y)).toList(),
+                      isCurved: true,
+                      colors: [
+                        isPositiveChange ? Colors.purpleAccent : Colors.red,
+                      ],
+                    ),
+                  ],
+                  minY: 0,
+                  minX: 0,
+                  maxY: _myData.length.toDouble(),
+                  borderData: FlBorderData(
+                      border: const Border(
+                          bottom: BorderSide(), left: BorderSide())),
+                  gridData: FlGridData(
+                    show: true,
+                    drawHorizontalLine: true,
+                    drawVerticalLine: true,
+                    getDrawingHorizontalLine: (value) {
+                      return FlLine(
+                        color: Colors.grey.shade300,
+                        strokeWidth: 1,
+                      );
+                    },
+                    getDrawingVerticalLine: (value) {
+                      return FlLine(
+                        color: Colors.grey.shade300,
+                        strokeWidth: 1,
+                      );
+                    },
+                    horizontalInterval: 1,
+                  ),
+                  titlesData: FlTitlesData(
+                    bottomTitles: _bottomTitles,
+                    leftTitles: _leftTitles,
+                    topTitles: SideTitles(showTitles: false),
+                    rightTitles: SideTitles(showTitles: false),
+                  )),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+SideTitles get _bottomTitles => SideTitles(
+      showTitles: true,
+      reservedSize: 22,
+      margin: 10,
+      interval: 1,
+      getTextStyles: (context, value) => const TextStyle(
+        color: Colors.blueGrey,
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+      ),
+      getTitles: (value) {
+        switch (value.toInt()) {
+          case 0:
+            return '';
+          case 1:
+            return 'Jn';
+          case 2:
+            return 'Fv';
+          case 3:
+            return 'Mr';
+          case 4:
+            return 'Ab';
+          case 5:
+            return 'Ma';
+          case 6:
+            return 'Jn';
+          case 7:
+            return 'Jl';
+          case 8:
+            return 'Ag';
+          case 9:
+            return 'St';
+          case 10:
+            return 'Ot';
+          case 11:
+            return 'Nv';
+          case 12:
+            return 'Dz';
+        }
+        return '';
+      },
+    );
+
+SideTitles get _leftTitles => SideTitles(
+      showTitles: true,
+      reservedSize: 20,
+      margin: 40,
+      interval: 1,
+      getTextStyles: (context, value) => const TextStyle(
+        color: Colors.blueGrey,
+        fontWeight: FontWeight.bold,
+        fontSize: 15,
+      ),
+    );
