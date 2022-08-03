@@ -1,0 +1,854 @@
+// import 'package:flutter/material.dart';
+// import 'dart:math';
+//
+// import 'package:fl_chart/fl_chart.dart';
+// import 'package:flutter/material.dart';
+// import 'package:graphs/price.dart';
+//
+// void main() {
+//   runApp(const MyApp());
+// }
+//
+// class MyApp extends StatelessWidget {
+//   const MyApp({Key? key}) : super(key: key);
+//
+//   // This widget is the root of your application.
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Flutter Demo',
+//       theme: ThemeData(
+//         primarySwatch: Colors.blue,
+//       ),
+//       home: LineChartWidget(true),
+//     );
+//   }
+// }
+//
+// const _dashArray = [4, 2];
+//
+// PricePoints pricePoints = PricePoints(0, 10);
+// PricePoints pricePoints2 = PricePoints(1, 200);
+// PricePoints pricePoints3 = PricePoints(2, 300);
+// PricePoints pricePoints4 = PricePoints(3, 900);
+//
+// class DataItem {
+//   int month;
+//   double sales;
+//
+//   DataItem({
+//     required this.month,
+//     required this.sales,
+//   });
+// }
+//
+// class LineChartWidget extends StatelessWidget {
+//   final List<DataItem> _myData = List.generate(
+//     13,
+//     (index) => DataItem(
+//       month: index+1,
+//       sales: Random().nextInt(10) + Random().nextDouble(),
+//     ),
+//   );
+//
+//   // final List<PricePoints> points = [
+//   //   pricePoints,
+//   //   pricePoints2,
+//   //   pricePoints3,
+//   //   pricePoints4
+//   // ];
+//   final bool isPositiveChange;
+//
+//   LineChartWidget(this.isPositiveChange, {Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     const double minY = 0;
+//     const double maxY = 20;
+//
+//     var spots = [
+//       const FlSpot(1, 6.9),
+//       const FlSpot(3, 3.2),
+//       const FlSpot(5, 1.34),
+//       const FlSpot(7, 2.45),
+//       const FlSpot(9, 0.0),
+//       const FlSpot(10, 2.0),
+//       const FlSpot(11, 4.4),
+//       const FlSpot(12, 5.2),
+//     ];
+//
+//     return AspectRatio(
+//       aspectRatio: 2,
+//       child: Scaffold(
+//         body: Container(
+//           height: 500,
+//           width: 600,
+//           child: Padding(
+//             padding: const EdgeInsets.all(28.0),
+//             child: LineChart(
+//               LineChartData(
+//                   lineTouchData: LineTouchData(
+//                       enabled: true,
+//                       touchCallback: (FlTouchEvent event,
+//                           LineTouchResponse? touchResponse) {
+//                         // TODO : Utilize touch event here to perform any operation
+//                       },
+//                       touchTooltipData: LineTouchTooltipData(
+//                         fitInsideVertically: false,
+//                         tooltipBgColor: Colors.black,
+//                         tooltipRoundedRadius: 20.0,
+//                         showOnTopOfTheChartBoxArea: false,
+//                         fitInsideHorizontally: true,
+//                         tooltipMargin: 0,
+//                         // getTooltipItems: (touchedSpots) {
+//                         //   return touchedSpots.map(
+//                         //     (LineBarSpot touchedSpot) {
+//                         //       const textStyle = TextStyle(
+//                         //         fontSize: 10,
+//                         //         fontWeight: FontWeight.w700,
+//                         //         color: Colors.white,
+//                         //       );
+//                         //       return LineTooltipItem(
+//                         //         points[touchedSpot.spotIndex].y.toInt().toString(),
+//                         //         textStyle,
+//                         //       );
+//                         //     },
+//                         //   ).toList();
+//                         // },
+//                       ),
+//                       getTouchedSpotIndicator:
+//                           (LineChartBarData barData, List<int> indicators) {
+//                         return indicators.map(
+//                           (int index) {
+//                             final line = FlLine(
+//                                 color: Colors.white,
+//                                 strokeWidth: 1,
+//                                 dashArray: _dashArray);
+//                             return TouchedSpotIndicatorData(
+//                               line,
+//                               FlDotData(
+//                                 show: true,
+//                                 getDotPainter: (spot, percent, barData, index) {
+//                                   return FlDotCirclePainter(
+//                                     radius: 5.5,
+//                                     color: Colors.white,
+//                                     strokeWidth: 2,
+//                                     strokeColor: Colors.white,
+//                                   );
+//                                 },
+//                               ),
+//                             );
+//                           },
+//                         ).toList();
+//                       },
+//                       getTouchLineEnd: (_, __) => double.infinity),
+//                   lineBarsData: [
+//                     LineChartBarData(
+//                       spots: _myData.map((dataItem) =>FlSpot(dataItem.month.toDouble(),dataItem.sales)).toList(),
+//                       //points.map((point) => FlSpot(point.x, point.y)).toList(),
+//                       isCurved: true,
+//                       colors: [
+//                         isPositiveChange ? Colors.purpleAccent : Colors.red,
+//                       ],
+//                     ),
+//                   ],
+//                   minY: 0,
+//                   minX: 0,
+//                   maxY: _myData.length.toDouble(),
+//                   borderData: FlBorderData(
+//                       border: const Border(
+//                           bottom: BorderSide(), left: BorderSide())),
+//                   gridData: FlGridData(
+//                     show: true,
+//                     drawHorizontalLine: true,
+//                     drawVerticalLine: true,
+//                     getDrawingHorizontalLine: (value) {
+//                       return FlLine(
+//                         color: Colors.grey.shade300,
+//                         strokeWidth: 1,
+//                       );
+//                     },
+//                     getDrawingVerticalLine: (value) {
+//                       return FlLine(
+//                         color: Colors.grey.shade300,
+//                         strokeWidth: 1,
+//                       );
+//                     },
+//                     horizontalInterval: 1,
+//                   ),
+//                   titlesData: FlTitlesData(
+//                     bottomTitles: _bottomTitles,
+//                     leftTitles: _leftTitles,
+//                     topTitles: SideTitles(showTitles: false),
+//                     rightTitles: SideTitles(showTitles: false),
+//                   )),
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+//
+// SideTitles get _bottomTitles => SideTitles(
+//       showTitles: true,
+//       reservedSize: 22,
+//       margin: 10,
+//       interval: 1,
+//       getTextStyles: (context, value) => const TextStyle(
+//         color: Colors.blueGrey,
+//         fontWeight: FontWeight.bold,
+//         fontSize: 16,
+//       ),
+//       getTitles: (value) {
+//         switch (value.toInt()) {
+//           case 0:
+//             return '';
+//           case 1:
+//             return 'Jn';
+//           case 2:
+//             return 'Fv';
+//           case 3:
+//             return 'Mr';
+//           case 4:
+//             return 'Ab';
+//           case 5:
+//             return 'Ma';
+//           case 6:
+//             return 'Jn';
+//           case 7:
+//             return 'Jl';
+//           case 8:
+//             return 'Ag';
+//           case 9:
+//             return 'St';
+//           case 10:
+//             return 'Ot';
+//           case 11:
+//             return 'Nv';
+//           case 12:
+//             return 'Dz';
+//         }
+//         return '';
+//       },
+//     );
+//
+// SideTitles get _leftTitles => SideTitles(
+//       showTitles: true,
+//       reservedSize: 20,
+//       margin: 40,
+//       interval: 1,
+//       getTextStyles: (context, value) => const TextStyle(
+//         color: Colors.blueGrey,
+//         fontWeight: FontWeight.bold,
+//         fontSize: 15,
+//       ),
+//     );
+import 'dart:convert';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:graphs/price.dart';
+import 'package:http/http.dart' as http;
+import 'dart:math';
+import 'package:fl_chart/fl_chart.dart';
+import 'package:intl/intl.dart';
+
+void main() {
+  runApp(
+    MaterialApp(home: LineChartWidget(true)),
+  );
+}
+
+class LineChartWidget extends StatefulWidget {
+  final bool isPositiveChange;
+
+  LineChartWidget(this.isPositiveChange, {Key? key}) : super(key: key);
+
+  @override
+  State<LineChartWidget> createState() => _LineChartWidgetState();
+}
+
+class _LineChartWidgetState extends State<LineChartWidget> {
+  final List<InvestmentItem> _myData = [];
+  bool showGrid = false;
+  List<int> _dashArray = [4, 2];
+  int year = 2021;
+  bool showIPCA = false;
+  bool isPerDay = false;
+  bool isPerMonth = false;
+
+  // List.generate(
+  //   13,
+  //   (index) => DataItem(
+  //     month: index + 1,
+  //     sales: Random().nextInt(10) + Random().nextDouble(),
+  //   ),
+  // );
+
+  @override
+  void initState() {
+    loadSalesData();
+    super.initState();
+  }
+
+  Future loadSalesData() async {
+    final String jsonString = await getJsonFromFirebase();
+    final dynamic jsonResponse = json.decode(jsonString);
+    for (Map<String, dynamic> i in jsonResponse) {
+      _myData.add(InvestmentItem.fromJson(i));
+    }
+    print(jsonResponse);
+  }
+
+  Future<String> getJsonFromFirebase() async {
+    String url =
+        "https://graph-poc-d3837-default-rtdb.firebaseio.com/rentabilidades.json";
+    http.Response response = await http.get(Uri.parse(url));
+    return response.body;
+  }
+
+  String dropdownvalueIdx = "Nenhum";
+
+  // List of items in our dropdown menu
+  var itemsidx = [
+    "IPCA",
+    "Nenhum",
+  ];
+
+  String dropdownvalue = "2021";
+
+  // List of items in our dropdown menu
+  var items = [
+    "2021",
+    "2022",
+    "3 meses",
+    "6 meses",
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    const double minY = 0;
+    const double maxY = 20;
+
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 100,
+          ),
+          Container(
+            height: 60,
+            child: Padding(
+              child: Row(
+                children: const [
+                  Icon(
+                    Icons.attach_money,
+                    color: Colors.blueAccent,
+                    size: 18,
+                  ),
+                  Text(
+                    "Meus investimentos",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+              padding: EdgeInsets.only(top: 40, left: 20),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 40, left: 25, bottom: 30),
+            child: Text(
+              "Rentabilidade da carteira",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 30, right: 30, bottom: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Indexadores"),
+                DropdownButton(
+                  // Initial Value
+                  value: dropdownvalueIdx,
+                  isExpanded: true,
+
+                  // Down Arrow Icon
+                  icon: const Icon(Icons.keyboard_arrow_down),
+
+                  // Array list of items
+                  items: itemsidx.map((String items) {
+                    return DropdownMenuItem(
+                      value: items,
+                      child: Text(items),
+                    );
+                  }).toList(),
+
+                  onChanged: (String? newValue) async {
+                    setState(() {
+                      dropdownvalueIdx = newValue!;
+                      dropdownvalueIdx == "IPCA"
+                          ? showIPCA = true
+                          : showIPCA = false;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 30, bottom: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Periodo"),
+                        DropdownButton(
+                          // Initial Value
+                          value: dropdownvalue,
+                          isExpanded: false,
+
+                          // Down Arrow Icon
+                          icon: const Icon(Icons.keyboard_arrow_down),
+
+                          // Array list of items
+                          items: items.map((String items) {
+                            return DropdownMenuItem(
+                              value: items,
+                              child: Text(items),
+                            );
+                          }).toList(),
+
+                          onChanged: (String? newValue) async {
+                            setState(() {
+                              dropdownvalue = newValue!;
+                              year = int.parse(newValue);
+                            });
+                            _myData.clear();
+                            loadSalesData();
+                          },
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 30),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Text("Mostrar malha?"),
+                              Checkbox(
+                                  value: showGrid,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      showGrid = value!;
+                                    });
+                                  })
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Text("Filtrar por dia"),
+                              Checkbox(
+                                  value: isPerDay,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isPerDay = value!;
+                                    });
+                                  })
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Container(
+            height: 500,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10, left: 20, right: 50),
+              child: FutureBuilder(
+                  future: getJsonFromFirebase(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.none) {
+                      return Container(
+                        height: 200,
+                        width: 300,
+                        child: Text(
+                            "Nao foi possivel carregar o gráfico de investimentos"),
+                      );
+                    }
+                    if (snapshot.hasData) {
+                      return LineChart(
+                        LineChartData(
+                            lineTouchData: LineTouchData(
+                                enabled: true,
+                                // touchCallback: (FlTouchEvent event,
+                                //     LineTouchResponse? touchResponse) {
+                                //   // TODO : Utilize touch event here to perform any operation
+                                // },
+                                touchTooltipData: LineTouchTooltipData(
+                                  fitInsideVertically: false,
+                                  tooltipBgColor: Colors.black,
+                                  tooltipRoundedRadius: 20.0,
+                                  showOnTopOfTheChartBoxArea: false,
+                                  fitInsideHorizontally: true,
+                                  tooltipMargin: 0,
+                                  // getTooltipItems: (touchedSpots) {
+                                  //   return touchedSpots.map(
+                                  //     (LineBarSpot touchedSpot) {
+                                  //       const textStyle = TextStyle(
+                                  //         fontSize: 10,
+                                  //         fontWeight: FontWeight.w700,
+                                  //         color: Colors.white,
+                                  //       );
+                                  //       return LineTooltipItem(
+                                  //         points[touchedSpot.spotIndex].y.toInt().toString(),
+                                  //         textStyle,
+                                  //       );
+                                  //     },
+                                  //   ).toList();
+                                  // },
+                                ),
+                                getTouchedSpotIndicator:
+                                    (LineChartBarData barData,
+                                        List<int> indicators) {
+                                  return indicators.map(
+                                    (int index) {
+                                      final line = FlLine(
+                                          color: Colors.white,
+                                          strokeWidth: 1,
+                                          dashArray: _dashArray);
+                                      return TouchedSpotIndicatorData(
+                                        line,
+                                        FlDotData(
+                                            show: false,
+                                            getDotPainter: (spot, percent,
+                                                barData, index) {
+                                              return FlDotCirclePainter(
+                                                radius: 5.5,
+                                                color: Colors.white,
+                                                strokeWidth: 2,
+                                                strokeColor: Colors.white,
+                                              );
+                                            }),
+                                      );
+                                    },
+                                  ).toList();
+                                },
+                                getTouchLineEnd: (_, __) => double.infinity),
+                            lineBarsData: [
+                              LineChartBarData(
+                                dotData: FlDotData(
+                                    show: true,
+                                    getDotPainter:
+                                        (spot, percent, barData, index) {
+                                      return FlDotCirclePainter(
+                                        radius: 2.5,
+                                        strokeWidth: 2,
+                                        color: Colors.purpleAccent,
+                                        strokeColor: Colors.white,
+                                      );
+                                    }),
+                                spots: _myData
+                                    .map((dataItem) => FlSpot(
+                                          double.parse(DateFormat.d()
+                                              .format(dataItem.data)),
+                                          dataItem.cotaCarteira.toDouble(),
+                                        ))
+                                    .toList(),
+                                //points.map((point) => FlSpot(point.x, point.y)).toList(),
+                                isCurved: false,
+                                colors: [
+                                  widget.isPositiveChange
+                                      ? Colors.purpleAccent
+                                      : Colors.red,
+                                ],
+                              ),
+                              LineChartBarData(
+                                  dotData: FlDotData(
+                                      show: false,
+                                      getDotPainter:
+                                          (spot, percent, barData, index) {
+                                        return FlDotCirclePainter(
+                                          radius: 2.5,
+                                          strokeWidth: 2,
+                                          color: Colors.green,
+                                          strokeColor: Colors.white,
+                                        );
+                                      }),
+                                  spots: _myData
+                                      .map((dataItem) => FlSpot(
+                                          double.parse(DateFormat.d()
+                                              .format(dataItem.data)),
+                                          dataItem.cotaIpca.toDouble()))
+                                      .toList(),
+                                  //points.map((point) => FlSpot(point.x, point.y)).toList(),
+                                  isCurved: true,
+                                  show: showIPCA,
+                                  colors: [
+                                    widget.isPositiveChange
+                                        ? Colors.green
+                                        : Colors.red,
+                                  ]),
+                            ],
+                            minY: 0,
+                            minX: 0,
+                            maxX:
+                            _myData
+                                .map((point) => double.parse(
+                                    DateFormat.d().format(point.data)))
+                                .reduce(max),
+                            maxY: _myData
+                                .map((point) => point.cotaCarteira.toDouble())
+                                .reduce(max),
+                            borderData: FlBorderData(
+                                border: const Border(
+                                    bottom: BorderSide(), left: BorderSide())),
+                            gridData: FlGridData(
+                              show: showGrid,
+                              drawHorizontalLine: true,
+                              drawVerticalLine: true,
+                              getDrawingHorizontalLine: (value) {
+                                return FlLine(
+                                  color: Colors.grey,
+                                  strokeWidth: 1,
+                                );
+                              },
+                              getDrawingVerticalLine: (value) {
+                                return FlLine(
+                                  color: Colors.grey,
+                                  strokeWidth: 1,
+                                );
+                              },
+                              horizontalInterval: _myData
+                                      .map((point) => point.cotaCarteira.toDouble())
+                                      .reduce(max) /
+                                  2,
+                              verticalInterval: 1,
+                            ),
+                            titlesData: FlTitlesData(
+                              bottomTitles: _bottomTitles(_myData, year),
+                              leftTitles: _leftTitles(_myData),
+                              topTitles: SideTitles(showTitles: false),
+                              rightTitles: SideTitles(showTitles: false),
+                            )),
+                      );
+                    } else {
+                      return Container(
+                          child: Center(child: CircularProgressIndicator()));
+                    }
+                  }),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 60, top: 20),
+            child: Row(
+              children: [
+                Container(
+                  width: 70,
+                  height: 20,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        color: Colors.purple,
+                        height: 10,
+                        width: 10,
+                      ),
+                      Container(
+                        child: Text("Carteira"),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+SideTitles _bottomTitles(List<InvestmentItem> data, int year) {
+  double values = data.map((point) => double.parse(DateFormat.d().format(point.data))).reduce((max))/3;
+  print(values);
+  return SideTitles(
+      showTitles: true,
+      reservedSize: 22,
+      textAlign: TextAlign.right,
+      margin: 20,
+      interval: values,
+      getTextStyles: (context, value) => const TextStyle(
+            color: Colors.blueGrey,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+      getTitles: (value) {
+        return value.round().toString();
+      }
+      //   if (values > 6) {
+      //     switch (value.toInt()) {
+      //       case 0:
+      //         return 'Jn';
+      //       case 1:
+      //         return 'Fv';
+      //       case 2:
+      //         return 'Mr';
+      //       case 3:
+      //         return 'Ab';
+      //       case 4:
+      //         return 'Ma';
+      //       case 5:
+      //         return 'Jn';
+      //       case 6:
+      //         return 'Jl';
+      //       case 8:
+      //         return 'Ag';
+      //       case 9:
+      //         return 'St';
+      //       case 10:
+      //         return 'Ot';
+      //       case 11:
+      //         return 'Nv';
+      //       case 12:
+      //         return 'Dz';
+      //     }
+      //     return '';
+      //   }
+      //   if (values > 3) {
+      //     switch (value.toInt()) {
+      //       case 1:
+      //         return 'Jan';
+      //       case 2:
+      //         return 'Fev';
+      //       case 3:
+      //         return 'Mar';
+      //       case 4:
+      //         return 'Abr';
+      //       case 5:
+      //         return 'Mar';
+      //       case 6:
+      //         return 'Jun';
+      //       case 7:
+      //         return 'Jul';
+      //       case 8:
+      //         return 'Ago';
+      //       case 9:
+      //         return 'Set';
+      //       case 10:
+      //         return 'Out';
+      //       case 11:
+      //         return 'Nov';
+      //       case 12:
+      //         return 'Dez';
+      //     }
+      //     return '';
+      //   }
+      //   if (values <= 3) {
+      //     switch (value.toInt()) {
+      //       case 0:
+      //         return "";
+      //       case 1:
+      //         return 'Dia 1';
+      //       case 2:
+      //         return '2';
+      //       case 3:
+      //         return '3';
+      //       case 4:
+      //         return '4';
+      //       case 5:
+      //         return '5';
+      //       case 6:
+      //         return '6';
+      //       case 7:
+      //         return '7';
+      //       case 8:
+      //         return '7';
+      //       case 9:
+      //         return 'Set ${year}';
+      //       case 10:
+      //         return 'Out ${year}';
+      //       case 11:
+      //         return 'Nov ${year}';
+      //       case 12:
+      //         return 'Dez ${year}';
+      //       case 13:
+      //         return 'Dez ${year}';
+      //       case 14:
+      //         return 'Dez ${year}';
+      //       case 15:
+      //         return 'Dez ${year}';
+      //       case 16:
+      //         return 'Dez ${year}';
+      //       case 17:
+      //         return 'Dez ${year}';
+      //       case 18:
+      //         return 'Dez ${year}';
+      //       case 19:
+      //         return 'Dez ${year}';
+      //       case 20:
+      //         return 'Dez ${year}';
+      //       case 21:
+      //         return 'Dez ${year}';
+      //       case 22:
+      //         return 'Dez ${year}';
+      //       case 23:
+      //         return 'Dez ${year}';
+      //       case 24:
+      //         return 'Dez ${year}';
+      //       case 25:
+      //         return 'Dez ${year}';
+      //       case 26:
+      //         return 'Dez ${year}';
+      //       case 27:
+      //         return 'Dez ${year}';
+      //       case 28:
+      //         return 'Dez ${year}';
+      //       case 29:
+      //         return 'Dez ${year}';
+      //       case 30:
+      //         return 'Dez ${year}';
+      //       case 31:
+      //         return 'Dez ${year}';
+      //     }
+      //     return '';
+      //   }
+      //   return "";
+      // },
+      );
+}
+
+SideTitles _leftTitles(List<InvestmentItem> data) {
+  double values = data.map((point) => point.cotaCarteira.toDouble()).reduce(max) / 2;
+  String preciseValue = values.toStringAsPrecision(1);
+  double realValues = double.parse(preciseValue);
+  return SideTitles(
+    showTitles: true,
+    reservedSize: 50,
+    margin: 0,
+    interval: values,
+    getTextStyles: (context, value) => const TextStyle(
+      color: Colors.blueGrey,
+      fontWeight: FontWeight.bold,
+      fontSize: 15,
+    ),
+  );
+}
