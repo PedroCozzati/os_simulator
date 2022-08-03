@@ -1,0 +1,499 @@
+import 'dart:convert';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:graphs/pages/home_head.dart';
+import 'package:http/http.dart' as http;
+import 'dart:math';
+import 'package:fl_chart/fl_chart.dart';
+
+import 'datum.dart';
+
+class LineChartWidget extends StatefulWidget {
+  final bool isPositiveChange;
+
+  LineChartWidget(this.isPositiveChange, {Key? key}) : super(key: key);
+
+  @override
+  State<LineChartWidget> createState() => _LineChartWidgetState();
+}
+
+class _LineChartWidgetState extends State<LineChartWidget> {
+  final List<DataItem> _myData = [];
+  List<int> _dashArray = [4, 2];
+  int year = 2021;
+  bool showIPCA = false;
+
+  // List.generate(
+  //   13,
+  //   (index) => DataItem(
+  //     month: index + 1,
+  //     sales: Random().nextInt(10) + Random().nextDouble(),
+  //   ),
+  // );
+
+  @override
+  void initState() {
+    loadSalesData();
+    super.initState();
+  }
+
+  Future loadSalesData() async {
+    final String jsonString = await getJsonFromFirebase();
+    final dynamic jsonResponse = json.decode(jsonString);
+    for (Map<String, dynamic> i in jsonResponse) {
+      _myData.add(DataItem.fromJson(i));
+    }
+  }
+
+  Future<String> getJsonFromFirebase() async {
+    String url =
+        "https://graph-poc-d3837-default-rtdb.firebaseio.com/chartData${year}.json";
+    http.Response response = await http.get(Uri.parse(url));
+    return response.body;
+  }
+
+  String dropdownvalueIdx = "Nenhum";
+
+  // List of items in our dropdown menu
+  var itemsidx = [
+    "IPCA",
+    "Nenhum",
+  ];
+
+  String dropdownvalue = "2021";
+
+  // List of items in our dropdown menu
+  var items = [
+    "2021",
+    "2022",
+    "3 meses",
+    "6 meses",
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    const double minY = 0;
+    const double maxY = 20;
+
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 60,
+            child: Padding(
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.attach_money,
+                    color: Colors.blueAccent,
+                    size: 18,
+                  ),
+                  Text(
+                    "Meus investimentos",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+              padding: EdgeInsets.only(top: 40, left: 20),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.only(top: 40, left: 25, bottom: 30),
+            child: Text(
+              "Rentabilidade da carteira",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 30, right: 30, bottom: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Indexadores"),
+                DropdownButton(
+                  // Initial Value
+                  value: dropdownvalueIdx,
+                  isExpanded: true,
+
+                  // Down Arrow Icon
+                  icon: const Icon(Icons.keyboard_arrow_down),
+
+                  // Array list of items
+                  items: itemsidx.map((String items) {
+                    return DropdownMenuItem(
+                      value: items,
+                      child: Text(items),
+                    );
+                  }).toList(),
+
+                  onChanged: (String? newValue) async {
+                    setState(() {
+                      dropdownvalueIdx =newValue!;
+                      dropdownvalueIdx == "IPCA"
+                          ? showIPCA = !showIPCA
+                          : showIPCA = false;
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 30, bottom: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("Periodo"),
+                DropdownButton(
+                  // Initial Value
+                  value: dropdownvalue,
+                  isExpanded: false,
+
+                  // Down Arrow Icon
+                  icon: const Icon(Icons.keyboard_arrow_down),
+
+                  // Array list of items
+                  items: items.map((String items) {
+                    return DropdownMenuItem(
+                      value: items,
+                      child: Text(items),
+                    );
+                  }).toList(),
+
+                  onChanged: (String? newValue) async {
+                    setState(() {
+                      dropdownvalue = newValue!;
+                      year = int.parse(newValue);
+                    });
+                    _myData.clear();
+                    loadSalesData();
+                  },
+                ),
+              ],
+            ),
+          ),
+          Container(
+            height: 200,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10, left: 20, right: 50),
+              child: FutureBuilder(
+                  future: getJsonFromFirebase(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData && _myData.isNotEmpty) {
+                      return LineChart(
+                        LineChartData(
+                            lineTouchData: LineTouchData(
+                                enabled: true,
+                                // touchCallback: (FlTouchEvent event,
+                                //     LineTouchResponse? touchResponse) {
+                                //   // TODO : Utilize touch event here to perform any operation
+                                // },
+                                touchTooltipData: LineTouchTooltipData(
+                                  fitInsideVertically: false,
+                                  tooltipBgColor: Colors.black,
+                                  tooltipRoundedRadius: 20.0,
+                                  showOnTopOfTheChartBoxArea: false,
+                                  fitInsideHorizontally: true,
+                                  tooltipMargin: 0,
+                                  // getTooltipItems: (touchedSpots) {
+                                  //   return touchedSpots.map(
+                                  //     (LineBarSpot touchedSpot) {
+                                  //       const textStyle = TextStyle(
+                                  //         fontSize: 10,
+                                  //         fontWeight: FontWeight.w700,
+                                  //         color: Colors.white,
+                                  //       );
+                                  //       return LineTooltipItem(
+                                  //         points[touchedSpot.spotIndex].y.toInt().toString(),
+                                  //         textStyle,
+                                  //       );
+                                  //     },
+                                  //   ).toList();
+                                  // },
+                                ),
+                                getTouchedSpotIndicator:
+                                    (LineChartBarData barData,
+                                        List<int> indicators) {
+                                  return indicators.map(
+                                    (int index) {
+                                      final line = FlLine(
+                                          color: Colors.white,
+                                          strokeWidth: 1,
+                                          dashArray: _dashArray);
+                                      return TouchedSpotIndicatorData(
+                                        line,
+                                        FlDotData(
+                                            show: false,
+                                            getDotPainter: (spot, percent,
+                                                barData, index) {
+                                              return FlDotCirclePainter(
+                                                radius: 5.5,
+                                                color: Colors.white,
+                                                strokeWidth: 2,
+                                                strokeColor: Colors.white,
+                                              );
+                                            }),
+                                      );
+                                    },
+                                  ).toList();
+                                },
+                                getTouchLineEnd: (_, __) => double.infinity),
+                            lineBarsData: [
+                              LineChartBarData(
+                                dotData: FlDotData(
+                                    show: true,
+                                    getDotPainter:
+                                        (spot, percent, barData, index) {
+                                      return FlDotCirclePainter(
+                                        radius: 2.5,
+                                        strokeWidth: 2,
+                                        color: Colors.purpleAccent,
+                                        strokeColor: Colors.white,
+                                      );
+                                    }),
+                                spots: _myData
+                                    .map((dataItem) => FlSpot(
+                                        dataItem.month.toDouble(),
+                                        dataItem.money))
+                                    .toList(),
+                                //points.map((point) => FlSpot(point.x, point.y)).toList(),
+                                isCurved: true,
+                                colors: [
+                                  widget.isPositiveChange
+                                      ? Colors.purpleAccent
+                                      : Colors.red,
+                                ],
+                              ),
+                              LineChartBarData(
+                                dotData: FlDotData(
+                                    show: true,
+                                    getDotPainter:
+                                        (spot, percent, barData, index) {
+                                      return FlDotCirclePainter(
+                                        radius: 2.5,
+                                        strokeWidth: 2,
+                                        color: Colors.green,
+                                        strokeColor: Colors.white,
+                                      );
+                                    }),
+                                spots: _myData
+                                    .map((dataItem) => FlSpot(
+                                        dataItem.month.toDouble(),
+                                        dataItem.money - 100))
+                                    .toList(),
+                                //points.map((point) => FlSpot(point.x, point.y)).toList(),
+                                isCurved: true,
+                                show: showIPCA,
+                                colors: [
+                                  widget.isPositiveChange
+                                      ? Colors.green
+                                      : Colors.red,
+                                ],
+                              ),
+                            ],
+                            minY: 0,
+                            minX: _myData
+                                .map((point) => point.month.toDouble())
+                                .reduce(min),
+                            maxX: _myData
+                                .map((point) => point.month.toDouble())
+                                .reduce(max),
+                            maxY:
+                                _myData.map((point) => point.money).reduce(max),
+                            borderData: FlBorderData(
+                                border: const Border(
+                                    bottom: BorderSide(), left: BorderSide())),
+                            gridData: FlGridData(
+                              show: true,
+                              drawHorizontalLine: true,
+                              drawVerticalLine: true,
+                              getDrawingHorizontalLine: (value) {
+                                return FlLine(
+                                  color: Colors.grey.shade300,
+                                  strokeWidth: 1,
+                                );
+                              },
+                              getDrawingVerticalLine: (value) {
+                                return FlLine(
+                                  color: Colors.grey.shade300,
+                                  strokeWidth: 1,
+                                );
+                              },
+                              horizontalInterval: _myData
+                                      .map((point) => point.money)
+                                      .reduce(max) /
+                                  2,
+                              verticalInterval: 1,
+                            ),
+                            titlesData: FlTitlesData(
+                              bottomTitles: _bottomTitles(_myData, year),
+                              leftTitles: _leftTitles(_myData),
+                              topTitles: SideTitles(showTitles: false),
+                              rightTitles: SideTitles(showTitles: false),
+                            )),
+                      );
+                    } else {
+                      return Container(
+                          child: Center(child: CircularProgressIndicator()));
+                    }
+                  }),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 60, top: 20),
+            child: Row(
+              children: [
+                Container(
+                  width: 70,
+                  height: 20,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        color: Colors.purple,
+                        height: 10,
+                        width: 10,
+                      ),
+                      Container(
+                        child: Text("Carteira"),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+SideTitles _bottomTitles(List<DataItem> data, int year) {
+  int values = data.map((point) => point.month).length;
+  return SideTitles(
+    showTitles: true,
+    reservedSize: 22,
+    textAlign: TextAlign.right,
+    margin: 20,
+    interval: 1,
+    getTextStyles: (context, value) => const TextStyle(
+      color: Colors.blueGrey,
+      fontWeight: FontWeight.bold,
+      fontSize: 16,
+    ),
+    getTitles: (value) {
+      if (values > 6) {
+        switch (value.toInt()) {
+          case 0:
+            return 'Jn';
+          case 1:
+            return 'Fv';
+          case 2:
+            return 'Mr';
+          case 3:
+            return 'Ab';
+          case 4:
+            return 'Ma';
+          case 5:
+            return 'Jn';
+          case 6:
+            return 'Jl';
+          case 7:
+            return 'Ag';
+          case 8:
+            return 'St';
+          case 9:
+            return 'Ot';
+          case 10:
+            return 'Nv';
+          case 11:
+            return 'Dz';
+        }
+        return '';
+      }
+      if (values > 3) {
+        switch (value.toInt()) {
+          case 0:
+            return 'Jan';
+          case 1:
+            return 'Fev';
+          case 2:
+            return 'Mar';
+          case 3:
+            return 'Abr';
+          case 4:
+            return 'Mar';
+          case 5:
+            return 'Jun';
+          case 6:
+            return 'Jul';
+          case 7:
+            return 'Ago';
+          case 8:
+            return 'Set';
+          case 9:
+            return 'Out';
+          case 10:
+            return 'Nov';
+          case 11:
+            return 'Dez';
+        }
+        return '';
+      }
+      if (values <= 3) {
+        switch (value.toInt()) {
+          case 0:
+            return 'Jan ${year}';
+          case 1:
+            return 'Fev ${year}';
+          case 2:
+            return 'Mar ${year}';
+          case 3:
+            return 'Abr ${year}';
+          case 4:
+            return 'Mar ${year}';
+          case 5:
+            return 'Jun ${year}';
+          case 6:
+            return 'Jul ${year}';
+          case 7:
+            return 'Ago ${year}';
+          case 8:
+            return 'Set ${year}';
+          case 9:
+            return 'Out ${year}';
+          case 10:
+            return 'Nov ${year}';
+          case 11:
+            return 'Dez ${year}';
+        }
+        return '';
+      }
+      return "";
+    },
+  );
+}
+
+SideTitles _leftTitles(List<DataItem> data) {
+  double values = data.map((point) => point.money).reduce(max) / 2;
+  String preciseValue = values.toStringAsPrecision(1);
+  double realValues = double.parse(preciseValue);
+  return SideTitles(
+    showTitles: true,
+    reservedSize: 30,
+    margin: 20,
+    interval: values,
+    getTextStyles: (context, value) => const TextStyle(
+      color: Colors.blueGrey,
+      fontWeight: FontWeight.bold,
+      fontSize: 15,
+    ),
+  );
+}
