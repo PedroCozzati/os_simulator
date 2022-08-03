@@ -1,0 +1,17 @@
+class DataItem {
+  int month;
+  double money;
+
+  DataItem({
+    required this.month,
+    required this.money,
+  });
+
+  factory DataItem.fromJson(Map<String, dynamic> parsedJson) {
+    return DataItem(
+      month: parsedJson['month'],
+      money: parsedJson['money'],
+      //barColor:parsedJson['barColor'].toString(),
+    );
+  }
+}
