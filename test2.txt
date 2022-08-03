@@ -19,6 +19,7 @@ class LineChartWidget extends StatefulWidget {
 
 class _LineChartWidgetState extends State<LineChartWidget> {
   final List<DataItem> _myData = [];
+  bool showGrid = false;
   List<int> _dashArray = [4, 2];
   int year = 2021;
   bool showIPCA = false;
@@ -149,31 +150,59 @@ class _LineChartWidgetState extends State<LineChartWidget> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Periodo"),
-                DropdownButton(
-                  // Initial Value
-                  value: dropdownvalue,
-                  isExpanded: false,
 
-                  // Down Arrow Icon
-                  icon: const Icon(Icons.keyboard_arrow_down),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
 
-                  // Array list of items
-                  items: items.map((String items) {
-                    return DropdownMenuItem(
-                      value: items,
-                      child: Text(items),
-                    );
-                  }).toList(),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Periodo"),
+                        DropdownButton(
+                          // Initial Value
+                          value: dropdownvalue,
+                          isExpanded: false,
 
-                  onChanged: (String? newValue) async {
-                    setState(() {
-                      dropdownvalue = newValue!;
-                      year = int.parse(newValue);
-                    });
-                    _myData.clear();
-                    loadSalesData();
-                  },
+                          // Down Arrow Icon
+                          icon: const Icon(Icons.keyboard_arrow_down),
+
+                          // Array list of items
+                          items: items.map((String items) {
+                            return DropdownMenuItem(
+                              value: items,
+                              child: Text(items),
+                            );
+                          }).toList(),
+
+                          onChanged: (String? newValue) async {
+                            setState(() {
+                              dropdownvalue = newValue!;
+                              year = int.parse(newValue);
+                            });
+                            _myData.clear();
+                            loadSalesData();
+                          },
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 30),
+                      child: Row(
+                        children: [
+                          Text("Mostrar malha?"),
+                          Checkbox(value: showGrid, onChanged: (value){
+                            setState(() {
+                              showGrid = value!;
+                            });
+                          })
+                        ],
+                      ),
+                    ),
+
+                  ],
                 ),
               ],
             ),
@@ -310,18 +339,18 @@ class _LineChartWidgetState extends State<LineChartWidget> {
                                 border: const Border(
                                     bottom: BorderSide(), left: BorderSide())),
                             gridData: FlGridData(
-                              show: true,
+                              show: showGrid,
                               drawHorizontalLine: true,
                               drawVerticalLine: true,
                               getDrawingHorizontalLine: (value) {
                                 return FlLine(
-                                  color: Colors.grey.shade300,
+                                  color: Colors.grey,
                                   strokeWidth: 1,
                                 );
                               },
                               getDrawingVerticalLine: (value) {
                                 return FlLine(
-                                  color: Colors.grey.shade300,
+                                  color: Colors.grey,
                                   strokeWidth: 1,
                                 );
                               },
