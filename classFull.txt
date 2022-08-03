@@ -1,0 +1,26 @@
+import 'dart:convert';
+
+class InvestmentItem {
+  DateTime data;
+  num cotaCDI;
+  num cotaCarteira;
+  num cotaIpca;
+
+
+  InvestmentItem({
+    required this.cotaCarteira,
+    required this.cotaCDI,
+    required this.cotaIpca,
+    required this.data,
+  });
+
+  factory InvestmentItem.fromJson(Map<String, dynamic> parsedJson) {
+    return InvestmentItem(
+      data: DateTime.parse(parsedJson['data']),
+      cotaCarteira: parsedJson['cotaCarteira'],
+      cotaCDI: parsedJson['cotaCDI'],
+      cotaIpca: parsedJson['cotaIpca'],
+      //barColor:parsedJson['barColor'].toString(),
+    );
+  }
+}
